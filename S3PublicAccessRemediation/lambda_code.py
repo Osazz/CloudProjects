@@ -63,8 +63,8 @@ def get_non_compliant_s3_from_config():
     logger.info(f"Starting to get compliance details for config rule "
                 f"{config_rule_name}")
     try:
-        response = config_client.get_compliance_details_by_config_rule\
-            (ConfigRuleName=config_rule_name,ComplianceTypes=["NON_COMPLIANT"])
+        response = config_client.get_compliance_details_by_config_rule(
+            ConfigRuleName=config_rule_name, ComplianceTypes=["NON_COMPLIANT"])
         return [resp["EvaluationResultIdentifier"]["EvaluationResultQualifier"]
                 ["ResourceId"] for resp in response["EvaluationResults"]]
     except KeyError:
