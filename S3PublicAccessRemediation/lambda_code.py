@@ -23,11 +23,13 @@ def lambda_handler(event, context):
      - Disable public access for s3 bucket
      - Send sns topic to team bout which s3 buckets that was remediate.
     """
-    logger.info(f"Received event {event}, starting s3 public access remediation")
+    logger.info(f"Received event {event}, starting s3 public access "
+                f"remediation")
 
     non_compliant_s3_buckets = get_non_compliant_s3_from_config()
     if non_compliant_s3_buckets:
-        logger.info(f"Some buckets are not compliant, starting remediation now")
+        logger.info(f"Some buckets are not compliant, starting "
+                    f"remediation now")
         for bucket in non_compliant_s3_buckets:
             put_public_access_block(bucket)
 
@@ -41,7 +43,8 @@ def lambda_handler(event, context):
 def sns_notifier(bucket_names):
     try:
         subject = "Remediated S3 Buckets"
-        message = f"The following bucket are no longer accessible from public: {bucket_names}"
+        message = f"The following bucket are no longer accessible " \
+                  f"from public: {bucket_names}"
         __ = sns_client.publish(
             TopicArn=topic_arn,
             Subject=subject,
@@ -57,12 +60,13 @@ def get_non_compliant_s3_from_config():
     This calls aws config to get non-compliant resources
     :return: list of s3 buckets that are not compliant or empty list
     """
-    logger.info(f"Starting to get compliance details for config rule {config_rule_name}")
+    logger.info(f"Starting to get compliance details for config rule "
+                f"{config_rule_name}")
     try:
-        response = config_client.get_compliance_details_by_config_rule(ConfigRuleName=config_rule_name,
-                                                                       ComplianceTypes=["NON_COMPLIANT"])
-        return [resp["EvaluationResultIdentifier"]["EvaluationResultQualifier"]["ResourceId"]
-                for resp in response["EvaluationResults"]]
+        response = config_client.get_compliance_details_by_config_rule\
+            (ConfigRuleName=config_rule_name,ComplianceTypes=["NON_COMPLIANT"])
+        return [resp["EvaluationResultIdentifier"]["EvaluationResultQualifier"]
+                ["ResourceId"] for resp in response["EvaluationResults"]]
     except KeyError:
         logger.debug("All buckets are compliant")
         return []
