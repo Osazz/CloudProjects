@@ -86,7 +86,11 @@ if __name__ == '__main__':
         bucket = os.environ["BUCKET_NAME"]
         prefix = "exchange_rate"
         rates = rate_getter(apikey=api_key)
-        result_object = {"CAD": rates["CAD"], "NGN": rates["NGN"], "EUR": rates["EUR"]}
+        result_object = {
+            "CAD": rates["CAD"],
+            "NGN": rates["NGN"],
+            "EUR": rates["EUR"]
+        }
         upload_rate_to_s3(result_object, create_remote_key(prefix), bucket)
     except Exception as e:
         # Check if failure and send message if any
